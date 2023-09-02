@@ -2,11 +2,11 @@
   "name": "marzhochi/bpjs-kesehatan",
   "description": "BPJS Kesehatan Integration",
   "type": "package",
-  "version": "1.0.1",
+  "version": "2.0.2",
   "license": "MIT",
   "require": {
     "guzzlehttp/guzzle": "^7.2",
-    "symfony/var-dumper": "^3.4",
+    "symfony/var-dumper": "^6.2",
     "nullpunkt/lz-string-php": "dev-master"
   },
   "authors": [
