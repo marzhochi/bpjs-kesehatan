@@ -1,0 +1,24 @@
+{
+  "name": "marzhochi/bpjs-kesehatan",
+  "description": "BPJS Kesehatan Integration",
+  "type": "package",
+  "version": "1.0.1",
+  "license": "MIT",
+  "require": {
+    "guzzlehttp/guzzle": "^6.3",
+    "symfony/var-dumper": "^3.4",
+    "nullpunkt/lz-string-php": "dev-master"
+  },
+  "authors": [
+    {
+      "name": "Ismail Marzuqi",
+      "email": "marzhochi@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Marzhochi\\Bpjs\\": "src/"
+    }
+  },
+  "minimum-stability": "dev"
+}
