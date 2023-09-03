@@ -1,24 +1,24 @@
 {
-  "name": "marzhochi/bpjs-kesehatan",
-  "description": "BPJS Kesehatan Integration",
-  "type": "package",
-  "version": "2.0.1",
-  "license": "MIT",
-  "require": {
-    "guzzlehttp/guzzle": "^7.2",
-    "symfony/var-dumper": "^6.2",
-    "nullpunkt/lz-string-php": "^1.3"
-  },
-  "authors": [
+    "name": "marzhochi/bpjs-kesehatan",
+    "description": "Web Service BPJS Kesehatan",
+    "type": "package",
+    "version": "2.0.2",
+    "license": "MIT",
+    "require": {
+        "guzzlehttp/guzzle": "^7.2",
+        "symfony/var-dumper": "^6.2",
+        "nullpunkt/lz-string-php": "^1.3"
+    },
+    "authors": [
     {
-      "name": "Ismail Marzuqi",
-      "email": "marzhochi@gmail.com"
+        "name": "Ismail Marzuqi",
+        "email": "marzhochi@gmail.com"
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Marzhochi\\Bpjs\\": "src/"
-    }
-  },
-  "minimum-stability": "dev"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Marzhochi\\Bpjs\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
 }

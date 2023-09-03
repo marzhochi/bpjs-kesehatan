@@ -1,20 +1,24 @@
 <?php
+namespace Marzhochi\Bpjs\VClaim;
 
-namespace Marzhochi\Bpjs\Vclaim;
+use Marzhochi\Bpjs\BpjsService;
 
-use Marzhochi\Bpjs\BpjsIntegration;
-use GuzzleHttp\Exception\ClientException;
-
-class Rujukan extends BpjsIntegration
+class Rujukan extends BpjsService
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     public function insertRujukan($data = [])
     {
         $response = $this->post('Rujukan/2.0/insert', $data);
+        return json_decode($response, true);
+    }
+    public function updateRujukan($data = [])
+    {
+        $response = $this->put('Rujukan/2.0/update', $data);
+        return json_decode($response, true);
+    }
+    public function deleteRujukan($data = [])
+    {
+        $response = $this->delete('Rujukan/2.0/delete', $data);
         return json_decode($response, true);
     }
 
@@ -23,87 +27,66 @@ class Rujukan extends BpjsIntegration
         $response = $this->post('Rujukan/Khusus/insert', $data);
         return json_decode($response, true);
     }
-
-    public function updateRujukan($data = [])
+    public function update($data = [])
     {
-        $response = $this->put('Rujukan/2.0/Update', $data);
+        $response = $this->put('Rujukan/Khusus/update', $data);
         return json_decode($response, true);
     }
-
-    public function deleteRujukan($data = [])
-    {
-        $response = $this->delete('Rujukan/delete', $data);
-        return json_decode($response, true);
-    }
-
     public function deleteRujukanKhusus($data = [])
     {
         $response = $this->delete('Rujukan/Khusus/delete', $data);
         return json_decode($response, true);
     }
-    
+
     public function cariByNoRujukan($searchBy, $keyword)
     {
         if ($searchBy == 'RS') {
-            $urlSearch = 'Rujukan/RS/'.$keyword;
+            $url = 'Rujukan/RS/'.$keyword;
         } else {
-            $urlSearch = 'Rujukan/'.$keyword;
+            $url = 'Rujukan/'.$keyword;
         }
-        $response = $this->get($urlSearch);
+        $response = $this->get($url);
         return json_decode($response, true);
     }
-    
+
+    public function spesialistikRujukan($kodePPK, $tglRujukan)
+    {
+        $response = $this->get('Rujukan/ListSpesialistik/PPKRujukan/'.$kodePPK.'/TglRujukan/'.$tglRujukan);
+        return json_decode($response, true);
+    }
+
+    public function saranaRujukan($kodePPK)
+    {
+        $response = $this->get('Rujukan/ListSarana/PPKRujukan/'.$kodePPK);
+        return json_decode($response, true);
+    }
+
     public function cariByNoKartu($searchBy, $keyword, $multi = false)
     {
         $record = $multi ? 'List/' : '';
-
         if ($searchBy == 'RS') {
-            $urlSearch = 'Rujukan/RS/Peserta/'.$keyword;
+            $url = 'Rujukan/RS/Peserta/'.$keyword;
         } else {
-            $urlSearch = 'Rujukan/'.$record.'Peserta/'.$keyword;
+            $url = 'Rujukan/'.$record.'Peserta/'.$keyword;
         }
-        $response = $this->get($urlSearch);
+        $response = $this->get($url);
         return json_decode($response, true);
     }
-    
+
     public function cariByTglRujukan($searchBy, $keyword)
     {
         if ($searchBy == 'RS') {
-            $urlSearch = 'Rujukan/RS/TglRujukan/'.$keyword;
+            $url = 'Rujukan/RS/TglRujukan/'.$keyword;
         } else {
-            $urlSearch = 'Rujukan/List/Peserta/'.$keyword;
+            $url = 'Rujukan/List/Peserta/'.$keyword;
         }
-        $response = $this->get($urlSearch);
+        $response = $this->get($url);
         return json_decode($response, true);
     }
-    
-    public function listRujukanKhusus($bulan, $tahun)
+
+    public function cariRujukanKhusus($bulan, $tahun)
     {
-        $response = $this->get('Rujukan/Khusus/List/Bulan/'.$bulan.'/Tahun/'.$tahun);
-        return json_decode($response, true);
-    }
-    
-    public function listSpesialistikRujukan($kodePpk, $tgl)
-    {
-        $response = $this->get('Rujukan/ListSpesialistik/PPKRujukan/'.$kodePpk.'/TglRujukan/'.$tgl);
-        return json_decode($response, true);
-    }
-    
-    public function listSarana($kodePpk)
-    {
-        $response = $this->get('Rujukan/ListSarana/PPKRujukan/'.$kodePpk);
-        return json_decode($response, true);
-    }
-    
-    public function listRujukanKeluarRs($tglMulai, $tglMulai)
-    {
-        $response = $this->get('Rujukan/Keluar/List/tglMulai/'.$tglMulai.'/tglAkhir/'.$tglMulai);
-        return json_decode($response, true);
-    }
-    
-    public function jumlahSepRujukan($jenisRujukan, $noRujukan)
-    {
-        $response = $this->get('Rujukan/JumlahSEP/'.$jenisRujukan.'/'.$noRujukan);
+        $response = $this->get('Rujukan/Khusus/List/Bulan/'.$bulan.'/Tahun/'.$tahun.'');
         return json_decode($response, true);
     }
 }

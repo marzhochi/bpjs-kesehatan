@@ -1,80 +1,69 @@
 <?php
+namespace Marzhochi\Bpjs\VClaim;
+use Marzhochi\Bpjs\BpjsService;
 
-namespace Marzhochi\Bpjs\Vclaim;
-
-use Marzhochi\Bpjs\BpjsIntegration;
-use GuzzleHttp\Exception\ClientException;
-
-class RencanaKontrol extends BpjsIntegration
+class RencanaKontrol extends BpjsService
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
+    // Rencana Kontrol
     public function insertRencanaKontrol($data = [])
     {
         $response = $this->post('RencanaKontrol/insert', $data);
         return json_decode($response, true);
     }
-
     public function updateRencanaKontrol($data = [])
     {
         $response = $this->put('RencanaKontrol/Update', $data);
         return json_decode($response, true);
     }
-
     public function deleteRencanaKontrol($data = [])
     {
         $response = $this->delete('RencanaKontrol/Delete', $data);
         return json_decode($response, true);
     }
-
-    public function insertSpri($data = [])
+    public function listRencanaKontrol($tglAwal, $tglAkhir, $filter)
     {
-        $response = $this->post('RencanaKontrol/InsertSPRI', $data);
+        $response = $this->get('RencanaKontrol/ListRencanaKontrol/tglAwal/'.$tglAwal.'/'.'tglAkhir'.'/'.$tglAkhir.'/'.'filter'.'/'.$filter);
         return json_decode($response, true);
     }
 
-    public function updateSpri($data = [])
+    // SPRI
+    public function insertSPRI($data = [])
     {
-        $response = $this->post('RencanaKontrol/UpdateSPRI', $data);
+        $response = $this->post('RencanaKontrol/insertSPRI', $data);
+        return json_decode($response, true);
+    }
+    public function updateSPRI($data = [])
+    {
+        $response = $this->put('RencanaKontrol/UpdateSPRI', $data);
+        return json_decode($response, true);
+    }
+    public function cariSEP($noSEP)
+    {
+        $response = $this->get('RencanaKontrol/nosep/'.$noSEP);
+        return json_decode($response, true);
+    }
+    public function poliSpesialistik($jnsKontrol, $nomor, $tglKontrol)
+    {
+        $response = $this->get('RencanaKontrol/ListSpesialistik/JnsKontrol/'.$jnsKontrol.'/nomor/'.$nomor.'/TglRencanaKontrol/'.$tglKontrol);
+        return json_decode($response, true);
+    }
+    public function dokterKontrol($jnsKontrol, $kdPoli, $tglRencanaKontrol)
+    {
+        $response = $this->get('RencanaKontrol/JadwalPraktekDokter/JnsKontrol/'.$jnsKontrol.'/'.'KdPoli'.'/'.$kdPoli.'/'.'TglRencanaKontrol'.'/'.$tglRencanaKontrol);
         return json_decode($response, true);
     }
 
-    public function cariSep($noSep)
-    {
-        $response = $this->get('RencanaKontrol/nosep/'.$noSep);
-        return json_decode($response, true);
-    }
-
-    public function cariSuratKontrol($noSurat)
+    public function cariNoSuratKontrol($noSurat)
     {
         $response = $this->get('RencanaKontrol/noSuratKontrol/'.$noSurat);
         return json_decode($response, true);
     }
 
-    public function dataSuratKontrol($tglAwal, $tglAkhir, $filter)
+    public function dataNoSuratKontrol($tglAwal, $tglAkhir, $filter)
     {
         $response = $this->get('RencanaKontrol/ListRencanaKontrol/tglAwal/'.$tglAwal.'/tglAkhir/'.$tglAkhir.'/filter/'.$filter);
         return json_decode($response, true);
     }
-	
-	public function dataSuratKontrolKartu($bln,$thn,$noKartu,$filter)
-    {
-        $response = $this->get('RencanaKontrol/ListRencanaKontrol/Bulan/'.$bln.'/Tahun/'.$thn.'/Nokartu/'.$noKartu.'/filter/'.$filter);
-        return json_decode($response, true);
-    }
 
-    public function dataSpesialistik($jnsKontrol, $nomor, $tglRencanaKontrol)
-    {
-        $response = $this->get('RencanaKontrol/ListSpesialistik/JnsKontrol/'.$jnsKontrol.'/nomor/'.$nomor.'/TglRencanaKontrol/'.$tglRencanaKontrol);
-        return json_decode($response, true);
-    }
-
-    public function dataDokter($jnsKontrol, $kdPoli, $tglRencanaKontrol)
-    {
-        $response = $this->get('RencanaKontrol/JadwalPraktekDokter/JnsKontrol/'.$jnsKontrol.'/KdPoli/'.$kdPoli.'/TglRencanaKontrol/'.$tglRencanaKontrol);
-        return json_decode($response, true);
-    }
 }
