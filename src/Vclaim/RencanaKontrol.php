@@ -1,11 +1,11 @@
 <?php
 namespace Marzhochi\Bpjs\VClaim;
-
 use Marzhochi\Bpjs\BpjsService;
 
 class RencanaKontrol extends BpjsService
 {
 
+    // Rencana Kontrol
     public function insertRencanaKontrol($data = [])
     {
         $response = $this->post('RencanaKontrol/insert', $data);
@@ -21,9 +21,16 @@ class RencanaKontrol extends BpjsService
         $response = $this->delete('RencanaKontrol/Delete', $data);
         return json_decode($response, true);
     }
+    public function listRencanaKontrol($tglAwal, $tglAkhir, $filter)
+    {
+        $response = $this->get('RencanaKontrol/ListRencanaKontrol/tglAwal/'.$tglAwal.'/'.'tglAkhir'.'/'.$tglAkhir.'/'.'filter'.'/'.$filter);
+        return json_decode($response, true);
+    }
+
+    // SPRI
     public function insertSPRI($data = [])
     {
-        $response = $this->post('RencanaKontrol/InsertSPRI', $data);
+        $response = $this->post('RencanaKontrol/insertSPRI', $data);
         return json_decode($response, true);
     }
     public function updateSPRI($data = [])
@@ -31,30 +38,32 @@ class RencanaKontrol extends BpjsService
         $response = $this->put('RencanaKontrol/UpdateSPRI', $data);
         return json_decode($response, true);
     }
-    public function cariByNoSuratKontrol($keyword)
+    public function cariSEP($noSEP)
     {
-        $url = 'RencanaKontrol/noSuratKontrol/'.$keyword;
-        $response = $this->get($url);
+        $response = $this->get('RencanaKontrol/nosep/'.$noSEP);
+        return json_decode($response, true);
+    }
+    public function poliSpesialistik($jnsKontrol, $nomor, $tglKontrol)
+    {
+        $response = $this->get('RencanaKontrol/ListSpesialistik/JnsKontrol/'.$jnsKontrol.'/nomor/'.$nomor.'/TglRencanaKontrol/'.$tglKontrol);
+        return json_decode($response, true);
+    }
+    public function dokterKontrol($jnsKontrol, $kdPoli, $tglRencanaKontrol)
+    {
+        $response = $this->get('RencanaKontrol/JadwalPraktekDokter/JnsKontrol/'.$jnsKontrol.'/'.'KdPoli'.'/'.$kdPoli.'/'.'TglRencanaKontrol'.'/'.$tglRencanaKontrol);
         return json_decode($response, true);
     }
 
-    public function cariByNoKartu($month, $year, $cardNo, $filter)
+    public function cariNoSuratKontrol($noSurat)
     {
-        $url = 'RencanaKontrol/ListRencanaKontrol/Bulan/'.$month.'/Tahun/'.$year.'/Nokartu/'.$cardNo.'/filter/'.$filter;
-        $response = $this->get($url);
+        $response = $this->get('RencanaKontrol/noSuratKontrol/'.$noSurat);
         return json_decode($response, true);
     }
 
-    public function listDataSuratKontrol($dateFrom, $dateTo, $filter)
+    public function dataNoSuratKontrol($tglAwal, $tglAkhir, $filter)
     {
-        $url = 'RencanaKontrol/ListRencanaKontrol/tglAwal/'.$dateFrom.'/tglAkhir/'.$dateTo.'/filter/'.$filter;
-        $response = $this->get($url);
+        $response = $this->get('RencanaKontrol/ListRencanaKontrol/tglAwal/'.$tglAwal.'/tglAkhir/'.$tglAkhir.'/filter/'.$filter);
         return json_decode($response, true);
     }
-    public function cariByNoSEP($noSEP)
-    {
-        $url = 'RencanaKontrol/nosep/'.$noSEP;
-        $response = $this->get($url);
-        return json_decode($response, true);
-    }
+
 }
