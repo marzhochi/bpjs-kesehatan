@@ -8,33 +8,17 @@ class Rujukan extends BpjsService
 
     public function insertRujukan($data = [])
     {
-        $response = $this->post('Rujukan/2.0/insert', $data);
+        $response = $this->post('Rujukan/insert', $data);
         return json_decode($response, true);
     }
     public function updateRujukan($data = [])
     {
-        $response = $this->put('Rujukan/2.0/update', $data);
+        $response = $this->put('Rujukan/update', $data);
         return json_decode($response, true);
     }
     public function deleteRujukan($data = [])
     {
-        $response = $this->delete('Rujukan/2.0/delete', $data);
-        return json_decode($response, true);
-    }
-
-    public function insertRujukanKhusus($data = [])
-    {
-        $response = $this->post('Rujukan/Khusus/insert', $data);
-        return json_decode($response, true);
-    }
-    public function update($data = [])
-    {
-        $response = $this->put('Rujukan/Khusus/update', $data);
-        return json_decode($response, true);
-    }
-    public function deleteRujukanKhusus($data = [])
-    {
-        $response = $this->delete('Rujukan/Khusus/delete', $data);
+        $response = $this->delete('Rujukan/delete', $data);
         return json_decode($response, true);
     }
 
@@ -49,23 +33,11 @@ class Rujukan extends BpjsService
         return json_decode($response, true);
     }
 
-    public function spesialistikRujukan($kodePPK, $tglRujukan)
-    {
-        $response = $this->get('Rujukan/ListSpesialistik/PPKRujukan/'.$kodePPK.'/TglRujukan/'.$tglRujukan);
-        return json_decode($response, true);
-    }
-
-    public function saranaRujukan($kodePPK)
-    {
-        $response = $this->get('Rujukan/ListSarana/PPKRujukan/'.$kodePPK);
-        return json_decode($response, true);
-    }
-
     public function cariByNoKartu($searchBy, $keyword, $multi = false)
     {
         $record = $multi ? 'List/' : '';
         if ($searchBy == 'RS') {
-            $url = 'Rujukan/RS/Peserta/'.$keyword;
+            $url = 'Rujukan/RS/'.$record.'Peserta/'.$keyword;
         } else {
             $url = 'Rujukan/'.$record.'Peserta/'.$keyword;
         }
@@ -81,12 +53,6 @@ class Rujukan extends BpjsService
             $url = 'Rujukan/List/Peserta/'.$keyword;
         }
         $response = $this->get($url);
-        return json_decode($response, true);
-    }
-
-    public function cariRujukanKhusus($bulan, $tahun)
-    {
-        $response = $this->get('Rujukan/Khusus/List/Bulan/'.$bulan.'/Tahun/'.$tahun.'');
         return json_decode($response, true);
     }
 }

@@ -1,8 +1,8 @@
 <?php
 namespace Marzhochi\Bpjs;
-use LZCompressor;
 
 use GuzzleHttp\Client;
+
 
 class BpjsService{
 
@@ -10,6 +10,7 @@ class BpjsService{
      * Guzzle HTTP Client object
      * @var \GuzzleHttp\Client
      */
+
     private $clients;
 
     /**
@@ -23,12 +24,6 @@ class BpjsService{
      * @var int
      */
     private $cons_id;
-
-    /**
-     * X-cons-id header value
-     * @var string
-     */
-    private $user_key;
 
     /**
      * X-Timestamp header value
@@ -46,6 +41,8 @@ class BpjsService{
      * @var string
      */
     private $secret_key;
+
+    private $user_key;
 
     /**
      * @var string
@@ -69,7 +66,6 @@ class BpjsService{
             }
         }
 
-        //set X-Timestamp, X-Signature, and finally the headers
         $this->setTimestamp()->setSignature()->setHeaders();
     }
 
@@ -86,8 +82,8 @@ class BpjsService{
 
     protected function setTimestamp()
     {
-        date_default_timezone_set('UTC');
-        $this->timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->timestamp = (string)$dateTime->getTimestamp();
         return $this;
     }
 
@@ -100,34 +96,23 @@ class BpjsService{
         return $this;
     }
 
-    protected function decompress($string){
-      
-        return \LZCompressor\LZString::decompressFromEncodedURIComponent($string);
+    protected function decryptResponse($string)
+    {
+       $key = $this->cons_id.$this->secret_key.$this->timestamp;
+
+       $encrypt_method = 'AES-256-CBC';
+       $key_hash = hex2bin(hash('sha256', $key));
+
+       $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
+
+
+      $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+
+      return \LZCompressor\LZString::decompressFromEncodedURIComponent($output);
 
     }
 
-    protected function stringDecrypt($key, $string)
-    {     
-        $data = $string->response;
-        $encrypt_method = 'AES-256-CBC';
-    
-        // hash
-        $key_hash = hex2bin(hash('sha256', $key));
-    
-        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
-    
-        $output = openssl_decrypt(base64_decode($data), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-    
-        $response = array(
-            "metaData" => $string->metaData,
-            "response" => json_decode($this->decompress($output))
-        );
-
-         return json_encode($response);
-    }
-
-    protected function getNoDektrip($feature)
+    protected function get($feature)
     {
         $this->headers['Content-Type'] = 'application/json; charset=utf-8';
         try {
@@ -138,32 +123,21 @@ class BpjsService{
                     'headers' => $this->headers
                 ]
             )->getBody()->getContents();
-        } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
-        }
-       
-        return $response;
-    }
 
-    protected function get($feature)
-    {
-        $this->headers['Content-Type'] = 'application/json; charset=utf-8';
-        try {
-            $data = $this->clients->request(
-                'GET',
-                $this->base_url . '/' . $this->service_name . '/' . $feature,
-                [
-                    'headers' => $this->headers
-                ]
-            )->getBody()->getContents();
-            // var_dump($data);
-            $key = $this->headers['X-cons-id'] . $this->secret_key . $this->headers['X-Timestamp'];
-            $response = $this->stringDecrypt($key, json_decode($data));
+            if($this->service_name == "antreanrs"){
+                $result = $this->antreanResponse($response);
+
+            }else{
+                $result = $this->vclaimResponse($response);
+            }
+
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+
+            $result = json_encode($e->getMessage());
         }
-       
-        return $response;
+
+
+        return   $result ;
     }
 
     protected function post($feature, $data = [], $headers = [])
@@ -173,7 +147,7 @@ class BpjsService{
             $this->headers = array_merge($this->headers,$headers);
         }
         try {
-            $data = $this->clients->request(
+            $response = $this->clients->request(
                 'POST',
                 $this->base_url . '/' . $this->service_name . '/' . $feature,
                 [
@@ -181,19 +155,28 @@ class BpjsService{
                     'json' => $data,
                 ]
             )->getBody()->getContents();
-            $key = $this->headers['X-cons-id'] . $this->secret_key . $this->headers['X-Timestamp'];
-            $response = $this->stringDecrypt($key, json_decode($data));
+
+            if($this->service_name == "antreanrs"){
+                $result = $this->antreanResponse($response);
+
+            }else{
+                $result = $this->vclaimResponse($response);
+            }
+
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+
+            $result = json_encode($e->getMessage());
         }
-        return $response;
+
+
+        return   $result ;
     }
 
     protected function put($feature, $data = [])
     {
         $this->headers['Content-Type'] = 'application/x-www-form-urlencoded';
         try {
-            $data = $this->clients->request(
+            $response = $this->clients->request(
                 'PUT',
                 $this->base_url . '/' . $this->service_name . '/' . $feature,
                 [
@@ -202,12 +185,20 @@ class BpjsService{
                 ]
             )->getBody()->getContents();
 
-            $key = $this->headers['X-cons-id'] . $this->secret_key . $this->headers['X-Timestamp'];
-            $response = $this->stringDecrypt($key, json_decode($data));
+            if($this->service_name == "antreanrs"){
+                $result = $this->antreanResponse($response);
+
+            }else{
+                $result = $this->vclaimResponse($response);
+            }
+
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+
+            $result = json_encode($e->getMessage());
         }
-        return $response;
+
+
+        return   $result ;
     }
 
 
@@ -223,10 +214,76 @@ class BpjsService{
                     'json' => $data,
                 ]
             )->getBody()->getContents();
+            if($this->service_name == "antreanrs"){
+                $result = $this->antreanResponse($response);
+
+            }else{
+                $result = $this->vclaimResponse($response);
+            }
+
         } catch (\Exception $e) {
-            $response = $e->getResponse()->getBody();
+
+            $result = json_encode($e->getMessage());
         }
-        return $response;
+
+
+        return   $result ;
     }
+
+    protected function antreanResponse($response){
+
+        $decode_response = json_decode($response);
+
+        if($decode_response->metadata->code == 200 ){
+            if(property_exists($decode_response, 'response')){
+                $bodyResponse = $this->decryptResponse($decode_response->response);
+            }else{
+                $bodyResponse =$decode_response->metadata->message;
+            }
+
+        }else{
+            if(property_exists($decode_response, 'response')){
+                $bodyResponse = $this->decryptResponse($decode_response->response);
+            }else{
+                $bodyResponse =$decode_response->metadata;
+            }
+        }
+
+        $data = [
+            'metadata'=>$decode_response->metadata,
+            'response'=> $bodyResponse
+        ];
+
+        return json_encode($data);
+
+    }
+
+    protected function vclaimResponse($response){
+
+        $decode_response = json_decode($response);
+
+        if($decode_response->metaData->code == 200 ){
+            if(property_exists($decode_response, 'response')){
+                $bodyResponse = $this->decryptResponse($decode_response->response);
+            }else{
+                $bodyResponse =$decode_response->metaData->message;
+            }
+        }else{
+            if(property_exists($decode_response, 'response')){
+                $bodyResponse = $this->decryptResponse($decode_response->response);
+            }else{
+                $bodyResponse =$decode_response->metaData->message;
+            }
+        }
+
+        $data = [
+            'metadata'=>$decode_response->metaData,
+            'response'=> $bodyResponse
+        ];
+
+        return json_encode($data);
+
+    }
+
 
 }

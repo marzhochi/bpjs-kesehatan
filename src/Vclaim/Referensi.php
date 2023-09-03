@@ -9,16 +9,8 @@ class Referensi extends BpjsService
     public function diagnosa($keyword)
     {
         $response = $this->get('referensi/diagnosa/'.$keyword);
-        
         return json_decode($response, true);
     }
-    public function diagnosaPRB()
-    {
-        $response = $this->get('referensi/diagnosaprb/');
-        // var_dump($response);
-        return json_decode($response, true);
-    }
-
     public function poli($keyword)
     {
         $response = $this->get('referensi/poli/'.$keyword);
@@ -93,12 +85,6 @@ class Referensi extends BpjsService
     public function pascapulang()
     {
         $response = $this->get('referensi/pascapulang');
-        return json_decode($response, true);
-    }
-
-    public function obat($keyword)
-    {
-        $response = $this->get('referensi/obatprb/'.$keyword);
         return json_decode($response, true);
     }
 
